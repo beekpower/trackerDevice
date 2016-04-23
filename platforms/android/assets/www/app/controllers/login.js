@@ -3,13 +3,6 @@ function ($scope, $state, $api, $ionicPlatform, $cordovaDeviceMotion, $cordovaGe
   var lastLat;
   var lastLon;
 
-  $api.uploadCoord(12.4, 12.4).success(function(response) {
-    alert("success");
-  }).error(function(response) {
-    alert("failure");
-  });
-
-  return;
    $ionicPlatform.ready(function() {
      $scope.accel = {};
      $scope.rotation = {};
