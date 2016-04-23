@@ -1,5 +1,14 @@
 angular.module('controllers').controller('LoginController',
 function ($scope, $state, $api, $ionicPlatform, $cordovaDeviceMotion, $cordovaGeolocation, $interval) {
+
+
+  $api.uploadCoord(12.4, 12.4).success(function(response) {
+    alert("success");
+  }).error(function(response) {
+    alert("failure");
+  });
+
+  return;
    $ionicPlatform.ready(function() {
      $scope.accel = {};
      $scope.rotation = {};
@@ -32,6 +41,12 @@ function ($scope, $state, $api, $ionicPlatform, $cordovaDeviceMotion, $cordovaGe
         // error
       },
       function(position) {
+        $api.uploadCoord(position.coords.latitude, position.coords.longitude).success(function(response) {
+          alert("success");
+        }).error(function(response) {
+          alert("failure");
+        });
+
         $scope.gps.lat  = position.coords.latitude
         $scope.gps.lon = position.coords.longitude
     });

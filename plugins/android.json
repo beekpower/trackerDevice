@@ -13,6 +13,9 @@
         "cordova-plugin-device-motion": {
             "PACKAGE_NAME": "com.ionicframework.connectumobile838112"
         },
+        "cordova-plugin-geolocation": {
+            "PACKAGE_NAME": "com.ionicframework.connectumobile838112"
+        },
         "cordova-plugin-statusbar": {
             "PACKAGE_NAME": "com.ionicframework.connectumobile838112"
         },
@@ -23,9 +26,6 @@
             "PACKAGE_NAME": "com.ionicframework.connectumobile838112"
         },
         "org.apache.cordova.splashscreen": {
-            "PACKAGE_NAME": "com.ionicframework.connectumobile838112"
-        },
-        "cordova-plugin-geolocation": {
             "PACKAGE_NAME": "com.ionicframework.connectumobile838112"
         }
     },

@@ -22,6 +22,18 @@ module.exports = [
         ]
     },
     {
+        "file": "plugins/cordova-plugin-geolocation/www/android/geolocation.js",
+        "id": "cordova-plugin-geolocation.geolocation",
+        "clobbers": [
+            "navigator.geolocation"
+        ]
+    },
+    {
+        "file": "plugins/cordova-plugin-geolocation/www/PositionError.js",
+        "id": "cordova-plugin-geolocation.PositionError",
+        "runs": true
+    },
+    {
         "file": "plugins/cordova-plugin-statusbar/www/statusbar.js",
         "id": "cordova-plugin-statusbar.statusbar",
         "clobbers": [
@@ -46,31 +58,19 @@ module.exports = [
         "clobbers": [
             "navigator.splashscreen"
         ]
-    },
-    {
-        "file": "plugins/cordova-plugin-geolocation/www/android/geolocation.js",
-        "id": "cordova-plugin-geolocation.geolocation",
-        "clobbers": [
-            "navigator.geolocation"
-        ]
-    },
-    {
-        "file": "plugins/cordova-plugin-geolocation/www/PositionError.js",
-        "id": "cordova-plugin-geolocation.PositionError",
-        "runs": true
     }
 ];
 module.exports.metadata = 
 // TOP OF METADATA
 {
+    "cordova-plugin-compat": "1.0.0",
     "cordova-plugin-device": "1.1.1",
     "cordova-plugin-device-motion": "1.2.1",
+    "cordova-plugin-geolocation": "2.2.0",
     "cordova-plugin-statusbar": "2.0.0",
     "cordova-plugin-whitelist": "1.1.1-dev",
     "dk.bluesteel.plugins.task-description-color": "1.0.3",
-    "org.apache.cordova.splashscreen": "1.0.0",
-    "cordova-plugin-compat": "1.0.0",
-    "cordova-plugin-geolocation": "2.2.0"
+    "org.apache.cordova.splashscreen": "1.0.0"
 };
 // BOTTOM OF METADATA
 });
