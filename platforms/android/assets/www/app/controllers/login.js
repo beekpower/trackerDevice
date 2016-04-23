@@ -19,7 +19,7 @@ function ($scope, $state, $api, $ionicPlatform, $cordovaDeviceMotion, $cordovaGe
       }, 100);
 
 
-      var posOptions = {timeout: 10000, enableHighAccuracy: false};
+       var posOptions = { maximumAge: 0, timeout: 10000, enableHighAccuracy: true};
 $cordovaGeolocation
   .getCurrentPosition(posOptions)
   .then(function (position) {
@@ -30,12 +30,7 @@ $cordovaGeolocation
   });
 
 
-var watchOptions = {
-  timeout : 3000,
-  enableHighAccuracy: false // may cause errors if true
-};
-
-var watch = $cordovaGeolocation.watchPosition(watchOptions);
+var watch = $cordovaGeolocation.watchPosition(posOptions);
 watch.then(
   null,
   function(err) {
