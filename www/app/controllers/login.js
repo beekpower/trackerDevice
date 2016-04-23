@@ -1,6 +1,7 @@
 angular.module('controllers').controller('LoginController',
 function ($scope, $state, $api, $ionicPlatform, $cordovaDeviceMotion, $cordovaGeolocation, $interval) {
-
+  var lastLat;
+  var lastLon;
 
   $api.uploadCoord(12.4, 12.4).success(function(response) {
     alert("success");
@@ -30,6 +31,8 @@ function ($scope, $state, $api, $ionicPlatform, $cordovaDeviceMotion, $cordovaGe
     $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
       $scope.gps.lat  = position.coords.latitude
       $scope.gps.lon = position.coords.longitude
+      lastLat = position.coords.latitude;
+      lastLon = position.coords.longitude;
     }, function(err) {
       // error
     });
@@ -41,11 +44,14 @@ function ($scope, $state, $api, $ionicPlatform, $cordovaDeviceMotion, $cordovaGe
         // error
       },
       function(position) {
-        $api.uploadCoord(position.coords.latitude, position.coords.longitude).success(function(response) {
-          alert("success");
-        }).error(function(response) {
-          alert("failure");
-        });
+        if (position.coords.latitude != lastLat && position.coords.longitude != lastLon) {
+          $api.uploadCoord(position.coords.latitude, position.coords.longitude).success(function(response) {
+            lastLat = position.coords.latitude;
+            lastLon = position.coords.longitude;
+          }).error(function(response) {
+            alert("failure");
+          });
+        }
 
         $scope.gps.lat  = position.coords.latitude
         $scope.gps.lon = position.coords.longitude
