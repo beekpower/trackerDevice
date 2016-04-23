@@ -3,8 +3,8 @@
   angular.module('services')
     .service('$api', function ($http) {
       var domain = "api.connect.university";
-      this.uploadCoord = function (lat, lng) {
-        return $http.get("http://httpbin.org/ip");
+      this.uploadCoord = function (lat, log) {
+        return $http.get("http://" + domain + "/track", { "lat": lat, "lng": log});
       }
     })
 })();
