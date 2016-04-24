@@ -2,17 +2,14 @@ angular.module('controllers').controller('LoginController',
 function ($scope, $state, $api, $ionicPlatform, $cordovaDeviceMotion, $cordovaGeolocation, $interval) {
   var lastLat;
   var lastLon;
-  var armed = false;
   var rotationThreshold = 2;
-  var moved = false;
-
-
 
   $ionicPlatform.ready(function() {
-    $scope.accel = {};
     $scope.rotation = {};
     $scope.gps = {};
     $scope.rotationCal = {};
+    $scope.armed = false;
+    $scope.moved = false;
 
     //Check Accelerometer rotation
     $interval(function() {
@@ -23,12 +20,12 @@ function ($scope, $state, $api, $ionicPlatform, $cordovaDeviceMotion, $cordovaGe
         console.log("error getting accel sensor data");
         // An error occurred. Show a message to the user
       });
-      if (armed) {
+      if ($scope.armed) {
         //check if moved based on calibrated val
-        console.log($scope.rotation.roll);
+        console.log($scope.rotation.roll - $scope.rotationCal.roll);
         if (Math.abs($scope.rotation.roll - $scope.rotationCal.roll) > rotationThreshold || Math.abs($scope.rotation.pitch - $scope.rotationCal.pitch) > rotationThreshold) {
           $api.setMoved(true).success(function(response) {
-            moved = true;
+            $scope.moved = true;
             console.log("Success setting moved");
           }).error(function(response) {
             console.log("Error setting moved");
@@ -41,19 +38,19 @@ function ($scope, $state, $api, $ionicPlatform, $cordovaDeviceMotion, $cordovaGe
     $interval(function() {
      $api.getStatus().success(function(response) {
        if (response.armed == true) {
-         if (armed = false) {
+         if ($scope.armed == false) {
            //calibrate
            $cordovaDeviceMotion.getCurrentAcceleration().then(function(result) {
              $scope.rotationCal.roll  = Math.atan2(result.y, result.z) * 180/3.14159265359;
-             $scope.rotation.rotationCal.pitch = Math.atan2(-result.x, Math.sqrt(result.y*result.y + result.z*result.z)) * 180/3.14159265359;
+             $scope.rotationCal.pitch = Math.atan2(-result.x, Math.sqrt(result.y*result.y + result.z*result.z)) * 180/3.14159265359;
            }, function(err) {
              console.log("error getting accel sensor data");
              // An error occurred. Show a message to the user
            });
          }
-         armed = true;
+         $scope.armed = true;
        } else {
-         armed = false;
+         $scope.armed = false;
        }
      }).error(function(response) {
        console.log("Failure Checking Status");
@@ -83,7 +80,7 @@ function ($scope, $state, $api, $ionicPlatform, $cordovaDeviceMotion, $cordovaGe
           $scope.gps.lat  = position.coords.latitude
           $scope.gps.lon = position.coords.longitude
 
-          if (moved) {
+          if ($scope.moved) {
             $api.uploadCoord(position.coords.latitude, position.coords.longitude).success(function(response) {
               console.log("Success uploading coord");
             }).error(function(response) {
