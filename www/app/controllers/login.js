@@ -3,8 +3,10 @@ function ($scope, $state, $api, $ionicPlatform, $cordovaDeviceMotion, $cordovaGe
   var lastLat;
   var lastLon;
   var armed = false;
-  var rotationThreshold = 10;
+  var rotationThreshold = 2;
   var moved = false;
+
+
 
   $ionicPlatform.ready(function() {
     $scope.accel = {};
@@ -14,10 +16,17 @@ function ($scope, $state, $api, $ionicPlatform, $cordovaDeviceMotion, $cordovaGe
 
     //Check Accelerometer rotation
     $interval(function() {
-      $scope.rotation = getRotation();
+      $cordovaDeviceMotion.getCurrentAcceleration().then(function(result) {
+        $scope.rotation.roll  = Math.atan2(result.y, result.z) * 180/3.14159265359;
+        $scope.rotation.pitch = Math.atan2(-result.x, Math.sqrt(result.y*result.y + result.z*result.z)) * 180/3.14159265359;
+      }, function(err) {
+        console.log("error getting accel sensor data");
+        // An error occurred. Show a message to the user
+      });
       if (armed) {
         //check if moved based on calibrated val
-        if (Math.abs($scope.rotation.roll - $scope.rotaionCal.roll) > rotationThreshold || Math.abs($scope.rotation.pitch - $scope.rotaionCal.pitch) > rotationThreshold) {
+        console.log($scope.rotation.roll);
+        if (Math.abs($scope.rotation.roll - $scope.rotationCal.roll) > rotationThreshold || Math.abs($scope.rotation.pitch - $scope.rotationCal.pitch) > rotationThreshold) {
           $api.setMoved(true).success(function(response) {
             moved = true;
             console.log("Success setting moved");
@@ -34,7 +43,13 @@ function ($scope, $state, $api, $ionicPlatform, $cordovaDeviceMotion, $cordovaGe
        if (response.armed == true) {
          if (armed = false) {
            //calibrate
-           $scope.rotationCal = getRotation();
+           $cordovaDeviceMotion.getCurrentAcceleration().then(function(result) {
+             $scope.rotationCal.roll  = Math.atan2(result.y, result.z) * 180/3.14159265359;
+             $scope.rotation.rotationCal.pitch = Math.atan2(-result.x, Math.sqrt(result.y*result.y + result.z*result.z)) * 180/3.14159265359;
+           }, function(err) {
+             console.log("error getting accel sensor data");
+             // An error occurred. Show a message to the user
+           });
          }
          armed = true;
        } else {
@@ -44,18 +59,6 @@ function ($scope, $state, $api, $ionicPlatform, $cordovaDeviceMotion, $cordovaGe
        console.log("Failure Checking Status");
      });
     }, 1000);
-
-    function getRotation() {
-     var rotation = {};
-     $cordovaDeviceMotion.getCurrentAcceleration().then(function(result) {
-       rotation.roll  = Math.atan2(result.y, result.z) * 180/3.14159265359;
-       rotation.pitch = Math.atan2(-result.x, Math.sqrt(result.y*result.y + result.z*result.z)) * 180/3.14159265359;
-       return rotation
-     }, function(err) {
-       return rotation
-       // An error occurred. Show a message to the user
-     });
-    }
 
     var posOptions = { maximumAge: 0, timeout: 10000, enableHighAccuracy: true};
     $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
