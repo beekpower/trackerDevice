@@ -2,6 +2,7 @@ angular.module('controllers').controller('LoginController',
 function ($scope, $state, $api, $ionicPlatform, $cordovaDeviceMotion, $cordovaGeolocation, $interval) {
   var lastLat;
   var lastLon;
+  var armed = false;
 
    $ionicPlatform.ready(function() {
      $scope.accel = {};
@@ -9,16 +10,34 @@ function ($scope, $state, $api, $ionicPlatform, $cordovaDeviceMotion, $cordovaGe
      $scope.gps = {};
      $interval(function() {
        $cordovaDeviceMotion.getCurrentAcceleration().then(function(result) {
+         $scope.accel = result;
+         $scope.rotation.roll  = Math.atan2(result.y, result.z) * 180/3.14159265359;
+         $scope.rotation.pitch = Math.atan2(-result.x, Math.sqrt(result.y*result.y + result.z*result.z)) * 180/3.14159265359;
+       if (armed) {
 
-       $scope.accel = result;
-       $scope.rotation.roll  = Math.atan2(result.y, result.z) * 180/3.14159265359;
-       $scope.rotation.pitch = Math.atan2(-result.x, Math.sqrt(result.y*result.y + result.z*result.z)) * 180/3.14159265359;
+       }
 
         // console.log(result);
       }, function(err) {
          // An error occurred. Show a message to the user
       });
     }, 100);
+
+    $interval(function() {
+      $api.getStatus().success(function(response) {
+        if (response.armed == true) {
+          if (armed = false) {
+            //calibrate
+          }
+          armed = true;
+        } else {
+          armed = false;
+        }
+      }).error(function(response) {
+        alert("failure");
+      });
+    }, 1000);
+
 
     var posOptions = { maximumAge: 0, timeout: 10000, enableHighAccuracy: true};
     $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
